@@ -1,0 +1,86 @@
+<!-- code of editor.html.erb as jdoodle is being used right now -->
+<div class="container my-5">
+  <div class="row">
+    <div class="col-12">
+      <div class="editor-controls mb-3">
+        <label for="language-select">Select Language:</label>
+        <select id="language-select" class="form-select">
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+          <option value="ruby">Ruby</option>
+          <!-- Add more options as needed -->
+        </select>
+      </div>
+      <div class="editor-container mb-3">
+        <textarea id="code-editor"></textarea>
+      </div>
+    </div>
+    <div class="col-12">
+      <h3>Output</h3>
+      <pre id="output">No output yet...</pre>
+      <button id="compile-btn" class="btn btn-primary mt-3">Compile</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/lib/codemirror.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/mode/javascript/javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/lib/codemirror.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/mode/javascript/javascript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/mode/python/python.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.5/mode/ruby/ruby.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const editor = initializeCodeMirror();
+  setUpLanguageSelector(editor);
+  setUpCompileButton(editor);
+});
+
+function initializeCodeMirror() {
+  return CodeMirror.fromTextArea(document.getElementById("code-editor"), {
+    lineNumbers: true,
+    mode: "javascript", // Default mode
+    theme: "material",
+    tabSize: 2,
+    lineWrapping: true, // Ensures long lines wrap to fit within the container
+  });
+}
+
+function setUpLanguageSelector(editor) {
+  document.getElementById('language-select').addEventListener('change', (event) => {
+    const selectedMode = event.target.value;
+    editor.setOption("mode", selectedMode);
+  });
+}
+
+function setUpCompileButton(editor) {
+  document.getElementById('compile-btn').addEventListener('click', () => {
+    const code = editor.getValue();
+    const language = editor.getOption("mode");
+    
+    compileCode(code, language);
+  });
+}
+
+function compileCode(code, language) {
+  fetch('/code/compile', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ code, language })
+  })
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('output').textContent = data.result || "No output";
+  })
+  .catch((error) => {
+    document.getElementById('output').textContent = `Error: ${error.message}`;
+  });
+}
+
+  
+</script>
