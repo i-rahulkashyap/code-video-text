@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get 'code/editor'
+  get 'code/compile'
+  post 'code/compile', to: 'code#compile'
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

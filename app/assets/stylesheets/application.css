@@ -41,3 +41,16 @@ body {
 .text-messaging {
   background-color: #dee2e6;
 }
+
+.code-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.CodeMirror {
+  flex-grow: 1;
+}
+
+
+
