@@ -1,0 +1,9 @@
+<div id="messages">
+<%=@messages.inspect %>
+  <%= render partial: 'messages/message', collection: @messages %>
+</div>
+
+<%= form_with model: Message.new, local: false, id: 'new_message' do |form| %>
+  <%= form.text_field :content, id: 'message_content' %>
+  <%= form.submit 'Send' %>
+<% end %>
